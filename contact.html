@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - BOOK MY TRUF</title>
+    <style>
+        :root {
+            --primary: #2D3436;
+            --accent: #f02a14;
+            --highlight: RED;
+            --light: rgb(206, 200, 89);
+            --white: #ffffff;
+            --text-gray: #636e72;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--primary);
+            background-color: var(--light);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+        }
+
+        .logo span { color: var(--highlight); }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, textarea {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .back-link a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">BOOK MY <span>TRUF</span></div>
+        <h1>Contact Information</h1>
+        <p style="margin-bottom: 1.5rem; color: var(--text-gray);">
+            For turf booking support and slot help, use the details below.
+        </p>
+        <div style="margin-bottom: 1.5rem; line-height: 1.8;">
+            <p><strong>Phone:</strong> +91 98765 43210</p>
+            <p><strong>Email:</strong> support@bookmytruf.com</p>
+            <p><strong>Address:</strong> 12 Cricket Lane, Sports City, Mumbai</p>
+            <p><strong>Hours:</strong> Mon - Sun, 8:00 AM - 10:00 PM</p>
+        </div>
+        <a href="index.html#booking" class="btn-primary" style="display: block; text-align: center;">Book Turf</a>
+        <div class="back-link">
+            <a href="index.html">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

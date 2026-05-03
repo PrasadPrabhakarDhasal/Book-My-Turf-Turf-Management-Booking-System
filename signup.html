@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - BOOK MY TURF</title>
+    <style>
+        :root { --primary:#0f172a; --accent:#2563eb; --white:#fff; --bg:#f8fafc; --text:#475569; }
+        * { box-sizing:border-box; margin:0; padding:0; font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif; }
+        body { background:var(--bg); color:var(--primary); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+        .card { width:100%; max-width:460px; background:var(--white); border:1px solid #e2e8f0; border-radius:16px; padding:24px; box-shadow:0 16px 35px rgba(15,23,42,.08); }
+        h1 { font-size:1.6rem; margin-bottom:16px; text-align:center; }
+        label { display:block; font-weight:600; margin:10px 0 6px; }
+        input { width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:10px; }
+        .btn { width:100%; margin-top:16px; border:none; border-radius:10px; padding:12px; font-weight:800; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; cursor:pointer; box-shadow:0 10px 24px rgba(37,99,235,.3); }
+        .links { text-align:center; margin-top:14px; color:var(--text); }
+        a { color:var(--accent); text-decoration:none; }
+        .toast { display:none; margin:0 0 12px; border-radius:10px; padding:10px; text-align:center; font-weight:600; }
+        .toast.success { display:block; background:#dcfce7; color:#166534; }
+        .toast.error { display:block; background:#fee2e2; color:#991b1b; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Create Your Account</h1>
+        <div class="toast" id="toast"></div>
+        <form id="signupForm">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" required placeholder="Enter your full name">
+            <label for="email">Email</label>
+            <input type="email" id="email" required placeholder="your@email.com">
+            <label for="password">Password</label>
+            <input type="password" id="password" required placeholder="Minimum 6 characters">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" required placeholder="Re-enter password">
+            <button class="btn" id="signupBtn" type="submit">Create Account</button>
+        </form>
+        <div class="links">Already have an account? <a href="login.html">Login</a></div>
+        <div class="links"><a href="index.html">← Back to Home</a></div>
+    </div>
+
+    <script>
+        const signupForm = document.getElementById('signupForm');
+        const signupBtn = document.getElementById('signupBtn');
+        const toast = document.getElementById('toast');
+
+        function showToast(message, type) {
+            toast.className = 'toast ' + type;
+            toast.textContent = message;
+        }
+
+        function parseJsonSafe(text) {
+            try {
+                return JSON.parse(text);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function isHttpProtocol() {
+            return window.location.protocol === 'http:' || window.location.protocol === 'https:';
+        }
+
+        if (!isHttpProtocol()) {
+            showToast('Open this page using XAMPP URL (http://localhost/...), not as a local file.', 'error');
+        }
+
+        fetch('auth.php?action=check')
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === 'success') {
+                    window.location.href = 'index.html';
+                }
+            })
+            .catch(() => {});
+
+        signupForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match.', 'error');
+                return;
+            }
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters.', 'error');
+                return;
+            }
+
+            signupBtn.disabled = true;
+            signupBtn.textContent = 'Creating account...';
+
+            const formData = new FormData();
+            formData.append('action', 'signup');
+            formData.append('full_name', name);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('confirm_password', confirmPassword);
+
+            fetch('auth.php', { method: 'POST', body: formData })
+                .then(async (response) => {
+                    const text = await response.text();
+                    const data = parseJsonSafe(text);
+                    if (!data) {
+                        throw new Error('Server returned invalid response. Open through localhost and ensure Apache/MySQL are running.');
+                    }
+                    return data;
+                })
+                .then((data) => {
+                    if (data.status === 'success') {
+                        showToast(data.message, 'success');
+                        setTimeout(() => (window.location.href = 'index.html'), 700);
+                    } else {
+                        showToast(data.message, 'error');
+                        signupBtn.disabled = false;
+                        signupBtn.textContent = 'Create Account';
+                    }
+                })
+                .catch((error) => {
+                    showToast(error.message || 'Something went wrong. Please try again.', 'error');
+                    signupBtn.disabled = false;
+                    signupBtn.textContent = 'Create Account';
+                });
+        });
+    </script>
+</body>
+</html>

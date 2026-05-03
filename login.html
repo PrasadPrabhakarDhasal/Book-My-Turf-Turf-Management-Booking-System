@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BOOK MY TURF</title>
+    <style>
+        :root { --primary:#0f172a; --accent:#2563eb; --white:#fff; --bg:#f8fafc; --text:#475569; }
+        * { box-sizing:border-box; margin:0; padding:0; font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif; }
+        body { background:var(--bg); color:var(--primary); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+        .card { width:100%; max-width:460px; background:var(--white); border:1px solid #e2e8f0; border-radius:16px; padding:24px; box-shadow:0 16px 35px rgba(15,23,42,.08); }
+        h1 { font-size:1.6rem; margin-bottom:16px; text-align:center; }
+        label { display:block; font-weight:600; margin:10px 0 6px; }
+        input { width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:10px; }
+        .btn { width:100%; margin-top:16px; border:none; border-radius:10px; padding:12px; font-weight:800; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; cursor:pointer; box-shadow:0 10px 24px rgba(37,99,235,.3); }
+        .links { text-align:center; margin-top:14px; color:var(--text); }
+        a { color:var(--accent); text-decoration:none; }
+        .toast { display:none; margin:0 0 12px; border-radius:10px; padding:10px; text-align:center; font-weight:600; }
+        .toast.success { display:block; background:#dcfce7; color:#166534; }
+        .toast.error { display:block; background:#fee2e2; color:#991b1b; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Login to Your Account</h1>
+        <div class="toast" id="toast"></div>
+        <form id="loginForm">
+            <label for="email">Email</label>
+            <input type="email" id="email" required placeholder="your@email.com">
+            <label for="password">Password</label>
+            <input type="password" id="password" required placeholder="Enter your password">
+            <button class="btn" id="loginBtn" type="submit">Login</button>
+        </form>
+        <div class="links">Don't have an account? <a href="signup.html">Sign Up</a></div>
+        <div class="links"><a href="index.html">← Back to Home</a></div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const toast = document.getElementById('toast');
+
+        function showToast(message, type) {
+            toast.className = 'toast ' + type;
+            toast.textContent = message;
+        }
+
+        function parseJsonSafe(text) {
+            try {
+                return JSON.parse(text);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function isHttpProtocol() {
+            return window.location.protocol === 'http:' || window.location.protocol === 'https:';
+        }
+
+        if (!isHttpProtocol()) {
+            showToast('Open this page using XAMPP URL (http://localhost/...), not as a local file.', 'error');
+        }
+
+        fetch('auth.php?action=check')
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === 'success') {
+                    window.location.href = 'index.html';
+                }
+            })
+            .catch(() => {});
+
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+
+            const formData = new FormData();
+            formData.append('action', 'login');
+            formData.append('email', document.getElementById('email').value.trim());
+            formData.append('password', document.getElementById('password').value);
+
+            fetch('auth.php', { method: 'POST', body: formData })
+                .then(async (response) => {
+                    const text = await response.text();
+                    const data = parseJsonSafe(text);
+                    if (!data) {
+                        throw new Error('Server returned invalid response. Open through localhost and ensure Apache/MySQL are running.');
+                    }
+                    return data;
+                })
+                .then((data) => {
+                    if (data.status === 'success') {
+                        showToast(data.message, 'success');
+                        setTimeout(() => (window.location.href = 'index.html'), 700);
+                    } else {
+                        showToast(data.message, 'error');
+                        loginBtn.disabled = false;
+                        loginBtn.textContent = 'Login';
+                    }
+                })
+                .catch((error) => {
+                    showToast(error.message || 'Something went wrong. Please try again.', 'error');
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Login';
+                });
+        });
+    </script>
+</body>
+</html>

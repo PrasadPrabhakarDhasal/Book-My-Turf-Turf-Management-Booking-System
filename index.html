@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOOK MY TURF | Turf Booking</title>
+    <link rel="stylesheet" href="landing.css">
+</head>
+
+<body>
+    <nav>
+        <div class="logo">BOOK MY <span>TURF</span></div>
+        <ul class="nav-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#booking">Book Slot</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="admin.php" class="btn-primary small">Admin</a></li>
+            <li id="welcomeItem" class="welcome" style="display:none;"></li>
+            <li id="loginNavItem"><a href="login.html">Login</a></li>
+            <li id="logoutNavItem" style="display:none;"><a href="auth.php?action=logout">Logout</a></li>
+        </ul>
+        <a id="ctaButton" href="signup.html" class="btn-primary">Sign Up</a>
+    </nav>
+
+    <section class="hero" id="hero">
+        <h1>Book your cricket turf.<br>Play matches with real slots and real teams.</h1>
+        <p>Reserve your turf in seconds, with transparent pricing and verified cricket grounds.</p>
+    </section>
+
+    <section class="listings" id="booking">
+        <h2 class="section-title">Register / Book Your Turf</h2>
+        <div class="listing-grid">
+            <article class="card">
+                <div class="card-img card-img-one"></div>
+                <div class="card-content">
+                    <span class="card-tag">Slot 1</span>
+                    <h3>Morning</h3>
+                    <p>Perfect early-hour cricket slot for fitness drills, batting nets, and team warmups.</p>
+                    <div class="card-footer">
+                        <span class="price">₹600 | 6 AM - 6 PM</span>
+                    </div>
+                </div>
+            </article>
+            <article class="card">
+                <div class="card-img card-img-two"></div>
+                <div class="card-content">
+                    <span class="card-tag">Slot 2</span>
+                    <h3>Night</h3>
+                    <p>Under-the-lights cricket for competitive evening matches and high-energy games.</p>
+                    <div class="card-footer">
+                        <span class="price">₹900 | 6 PM - 12 AM</span>
+                    </div>
+                </div>
+            </article>
+            <article class="card">
+                <div class="card-img card-img-three"></div>
+                <div class="card-content">
+                    <span class="card-tag">Slot 3</span>
+                    <h3>Team Practice</h3>
+                    <p>Dedicated full-team session with enough space for strategy, drills, and match simulation.</p>
+                    <div class="card-footer">
+                        <span class="price">₹1200 | 6 AM - 6 PM</span>
+                    </div>
+                </div>
+            </article>
+        </div>
+        <div class="global-book-btn-wrap">
+            <a id="commonBookBtn" href="signup.html" class="btn-primary">Book Now</a>
+        </div>
+    </section>
+
+    <section class="contact-wrap" id="contact">
+        <div class="contact-card">
+            <div class="logo contact-logo">BOOK MY <span>TURF</span></div>
+            <h2>Contact Information</h2>
+            <p class="contact-text">For turf booking support and slot help, use the details below.</p>
+            <div class="contact-details">
+                <p><strong>Phone:</strong> +91 98765 43210</p>
+                <p><strong>Email:</strong> support@bookmyturf.com</p>
+                <p><strong>Address:</strong> 12 Cricket Lane, Sports City, Mumbai</p>
+                <p><strong>Hours:</strong> Mon - Sun, 8:00 AM - 10:00 PM</p>
+            </div>
+            <a id="contactBookBtn" href="signup.html" class="btn-contact">Book Turf</a>
+            <a href="#hero" class="back-link">← Back to Home</a>
+        </div>
+    </section>
+
+    <script>
+        const ctaButton = document.getElementById('ctaButton');
+        const welcomeItem = document.getElementById('welcomeItem');
+        const loginNavItem = document.getElementById('loginNavItem');
+        const logoutNavItem = document.getElementById('logoutNavItem');
+        const contactBookBtn = document.getElementById('contactBookBtn');
+        const commonBookBtn = document.getElementById('commonBookBtn');
+
+        function setLoggedInUi(fullName) {
+            welcomeItem.style.display = 'list-item';
+            welcomeItem.textContent = 'Hi, ' + fullName;
+            loginNavItem.style.display = 'none';
+            logoutNavItem.style.display = 'list-item';
+            ctaButton.href = 'booking.php';
+            ctaButton.textContent = 'Book Slot';
+            contactBookBtn.href = 'booking.php';
+            commonBookBtn.href = 'booking.php';
+        }
+
+        fetch('auth.php?action=check')
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === 'success' && data.data && data.data.full_name) {
+                    setLoggedInUi(data.data.full_name);
+                }
+            })
+            .catch(() => {
+                // Keep guest UI if check fails.
+            });
+
+    </script>
+</body>
+
+</html>
